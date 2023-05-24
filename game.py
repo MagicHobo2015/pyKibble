@@ -13,9 +13,12 @@
 *   Contact:                                                                  *
 ****************************************************************************"""
 import pygame as pg
-from player import Player
-import sys
 from settings import Settings
+from player import Player
+from food import Foods
+from sound import Sound
+import sys
+
 
 class Game:
     def __init__(self) -> None:
@@ -30,19 +33,46 @@ class Game:
         self.clock = pg.time.Clock()
         self.running = True
         self.player = Player(self)
+        
+        # stuff to track
+        self.foods = Foods(self)
+        self.sounds = Sound()
+        
 
     def checkEvents(self) -> None:
+        # just a list of keys and what to do with them when pressed
+        keyList = { pg.K_w: ( 0, -1 ), pg.K_s: ( 0 , 1 ), pg.K_d: ( 1, 0 ), pg.K_a: ( -1, 0 ),
+                   pg.K_UP: ( 0, -1 ), pg.K_DOWN: ( 0, 1 ), pg.K_RIGHT: ( 1, 0 ), pg.K_LEFT: ( -1, 0 ) }
+        secondaryKeys = { pg.K_SPACE: "A", pg.K_RETURN: "Start" }
         
-        keyList = { pg.K_w: ( 0, -1 ), pg.K_s: ( 0 , 1 ), pg.K_d: ( 1, 0 ), pg.K_a: ( -1, 0 ) }
-
-        # first look for quit event
+        # first look for quit event TODO: convert all this to use keypressed so we can have two things pressed at once
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 # do the clean up stuff here
-                self.shutDownGame()
+                self.shutDownGame()   
             elif event.type == pg.KEYDOWN:
-                self.player.move(keyList[event.key])
+                if event.key in keyList:
+                    self.player.move(keyList[event.key], pg.KEYDOWN)
+                elif event.key in secondaryKeys:
+                    # handel start press and "a" button
+                    if secondaryKeys[event.key] == "A":
+                        self.player.fire(True)
+                    elif secondaryKeys[event.key] == "Start":
+                        if self.running:
+                            self.pause()
+                        # TODO: More here like menu selection, game start ect...
+            elif event.type == pg.KEYUP:
+                if event.key in keyList:
+                    self.player.move(keyList[event.key], pg.KEYUP)
+                elif event.key in secondaryKeys:
+                    if secondaryKeys[event.key] == "A":
+                        pass
 
+
+    def pause(self):
+        pass
+    
+    
     # shutdown clean up
     def shutDownGame(self) -> None:
         # clean up pygame
@@ -51,11 +81,13 @@ class Game:
         sys.exit()
 
     # All drawing is called from here.
-    def draw(self) -> None:
+    def update(self) -> None:
         # clear the screen
         self.screen.fill(self.settings.bgColor)
-        self.player.draw(self.screen)
-        
+        self.player.update( self.screen )
+        self.foods.update()
+
+
         # flip the display
         pg.display.flip()
 
@@ -68,7 +100,7 @@ class Game:
             if self.settings.showFps:
                 print(self.clock.get_fps())
 
-            self.draw()
+            self.update()
             pg.display.update()
             # limit frames per-second so it runs the same speed with different
             # hardware
@@ -78,7 +110,7 @@ class Game:
 def main():
     game = Game()
     game.play()
-    
-    
+
+
 if __name__ == "__main__":
     main()

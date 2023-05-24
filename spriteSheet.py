@@ -6,6 +6,7 @@
 
 import pygame as pg
 
+
 class SpriteSheet:
     def __init__( self, filepath, spriteWidth, spriteHeight ) -> None:
         try:
@@ -48,14 +49,10 @@ class SpriteSheet:
 
                 # new surface for the sprite
                 image = pg.Surface( (self.spriteWidth*3, self.spriteheight*3), pg.SRCALPHA )
-                print(f"getting image from {self.captureSquare.x}, {self.captureSquare.y}")
-                print(f"and the size were getting is {self.captureSquare.width}, {self.captureSquare.height}")
                 image.blit( self.spriteSheet, self.rectangle, self.captureSquare ) 
                 # now scale
                 stretched = pg.transform.rotozoom(image, 0, 3)
-                
-                self.listOfSprites.append( stretched )
-                
+                self.listOfSprites.append( stretched )      
         return self.listOfSprites
     
     

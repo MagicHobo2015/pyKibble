@@ -4,4 +4,9 @@ class Settings:
         self.resolution = [1920, 1080]
         self.bgColor = (132, 135, 133)
         
-        self.showFps = True
+        self.debugging = True
+        self.showFps = False
+        self.playerCoordinates = False
+        
+        self.playerSpeed = 10
+        self.foodSpeed = 5

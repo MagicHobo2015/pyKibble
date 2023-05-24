@@ -30,7 +30,7 @@ class AnimationTimer:
             self.lastCalled = now
         
         # starts the animation timer over
-    def resetAnimationTimer(self) -> None:
+    def reset(self) -> None:
         self.index = self.startIndex if self.startIndex <= self.endOfList else 0
     
     
@@ -38,4 +38,4 @@ class AnimationTimer:
     def image(self) -> pg.surface:
         # increment the timer
         self.nextFrame()
-        return self.imageList[self.index] if not self.isExpired() else None
+        return self.imageList[self.index]
