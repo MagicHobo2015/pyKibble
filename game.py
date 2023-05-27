@@ -17,6 +17,7 @@ from settings import Settings
 from player import Player
 from food import Foods
 from sound import Sound
+from biggles import Biggles
 import sys
 
 
@@ -36,7 +37,18 @@ class Game:
         
         # stuff to track
         self.foods = Foods(self)
-        self.sounds = Sound()
+        self.sounds = Sound(self)
+        self.biggles = Biggles(self)
+        
+        self.background = None
+        
+    def finishinit(self):
+        #load background
+        filePath = "./assets/spriteSheets/clouds/cloud1.png"
+        file = open( filePath, "r" )
+        image = pg.image.load( file )
+        self.background = pg.transform.scale_by(image, 1)
+        file.close()
         
 
     def checkEvents(self) -> None:
@@ -68,10 +80,8 @@ class Game:
                     if secondaryKeys[event.key] == "A":
                         pass
 
-
     def pause(self):
         pass
-    
     
     # shutdown clean up
     def shutDownGame(self) -> None:
@@ -84,16 +94,26 @@ class Game:
     def update(self) -> None:
         # clear the screen
         self.screen.fill(self.settings.bgColor)
-        self.player.update( self.screen )
+        
+        self.player.update()
         self.foods.update()
+        self.biggles.update()
 
-
+        self.handelCollisions()
         # flip the display
         pg.display.flip()
 
-
+    def handelCollisions(self) -> None:
+        # types of collisons, food - head, TODO: cannon-food
+        eatenFood = pg.sprite.spritecollide( self.biggles, self.foods.foods, False )
+        if eatenFood != None:
+            for food in eatenFood:
+                food.hit( food )
+                self.biggles.hit()
+        
     # main game loop is here
     def play(self) -> None:
+        self.sounds.playbackgroundMusic()
         while self.running:
             self.checkEvents()
 
@@ -104,8 +124,7 @@ class Game:
             pg.display.update()
             # limit frames per-second so it runs the same speed with different
             # hardware
-            self.clock.tick(60)
-
+            self.clock.tick( 60 )
 
 def main():
     game = Game()

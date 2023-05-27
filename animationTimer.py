@@ -1,3 +1,5 @@
+# this class doesnt work if there is only one image
+
 import pygame as pg
 
 class AnimationTimer:
@@ -11,11 +13,10 @@ class AnimationTimer:
         self.startIndex = startIndex
         self.index = self.startIndex
         
-        
         # returns true if you have reached the end of an animation
     def isExpired(self) -> bool:
-        return not self.loop and self.index >= self.endOfList - 1
-        
+        now = pg.time.get_ticks()
+        return not self.loop and self.index >= self.endOfList - 1 if now - self.lastCalled > self.delay else False
         
         # returns the next frame of animation
     def nextFrame(self) -> None:
@@ -26,13 +27,11 @@ class AnimationTimer:
             # here enough time has elapsed, increment'
             self.index += 1
             if self.loop: self.index %= self.endOfList
-            print( self.index )
             self.lastCalled = now
         
         # starts the animation timer over
     def reset(self) -> None:
         self.index = self.startIndex if self.startIndex <= self.endOfList else 0
-    
     
         # returns the next image in a list of animations       
     def image(self) -> pg.surface:

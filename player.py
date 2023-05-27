@@ -18,8 +18,9 @@ class Player(Sprite):
         self.rect = pg.Rect(self.game.screen.get_width() / 2, self.game.screen.get_height() / 2, self.spriteWidth, self.spriteHeight )
         
         # animation vars
-        self.spritesheet = SpriteSheet( self.filePath, self.spriteWidth, self.spriteHeight )
-        self.animationList = self.spritesheet.getAllSprites()
+        self.scale = 3
+        self.spritesheet = SpriteSheet( self.filePath, self.spriteWidth, self.spriteHeight, self.game )
+        self.animationList = self.spritesheet.getAllSprites( self.scale )
         self.animationSpeed = 50
         self.animationTimer = AnimationTimer(self.animationList, self.animationSpeed, startIndex=0, loop=False)
         self.firing = False
@@ -41,7 +42,7 @@ class Player(Sprite):
             self.direction = ( 0, 0 )
 
 
-    def update( self, game ) -> None:
+    def update( self ) -> None:
         if self.animationTimer.isExpired():
             self.firing = False
             self.animationTimer.reset()
@@ -50,7 +51,7 @@ class Player(Sprite):
             self.rect.centerx += self.direction[0] * self.speed
             self.rect.centery += self.direction[1] * self.speed
         self.rect.center = self.clamp( self.rect.center )
-        self.draw( game )
+        self.draw( self.game.screen )
         
 
     def draw(self, screen) -> None:

@@ -10,3 +10,4 @@ class Settings:
         
         self.playerSpeed = 10
         self.foodSpeed = 5
+        self.headSpeed = 5
